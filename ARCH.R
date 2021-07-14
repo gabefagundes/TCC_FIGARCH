@@ -70,7 +70,7 @@ arch_proc = function(
         
         y[i] = mu + r[i]
     }
-    out = list('y' = y, 'r' = r, 'sigma2' = sig2)
+    out = list('y' = y, 'r' = r, 'sigma2' = sig2, 'inov' = e)
     
     return(out)
 }
