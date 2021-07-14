@@ -10,7 +10,6 @@
 # Auxiliar ----------------------------------------------------------------
 
 
-
 f_alpha = function(x, alpha){
     
     m = length(x)
@@ -24,15 +23,30 @@ f_alpha = function(x, alpha){
 
 # ARCH --------------------------------------------------------------------
 
-arch_proc = function(mu, alpha0, alpha, y0, n){
+arch_proc = function(
+    alpha, 
+    y0,  
+    mu = 0, 
+    alpha0 = 0, 
+    n = 501,
+    alpha_st = 2,
+    beta_st = 0,
+    gamma_st = 1/2,
+    delta_st = 0){
     # Gera um processo ARCH(m) com inovações alpha-estaveis
     # mean = média do processo
     # alpha0 = constante de sig2
     # alpha: vetor de tamanho m >= 1
     # y0: vetor de tamanho m correspondente aos 'm' primeiros y's observados
     # n = tamanho do processo
+    
     m = length(y0)
-    e = rnorm(n)
+    
+    e = rstable(n, 
+                alpha_st,
+                beta_st,
+                gamma_st,
+                delta_st)
     
     sig2 = numeric(n)
     
@@ -48,7 +62,9 @@ arch_proc = function(mu, alpha0, alpha, y0, n){
         
         aux = (r[(i-m):(i-1)])^2
         
-        sig2[i] = alpha0 + f_alpha(aux, alpha)
+        #sig2[i] = alpha0 + f_alpha(aux, alpha)
+        
+        sig2[i] = alpha0 + sum(aux*alpha) 
         
         r[i] = sqrt(sig2[i])*e[i]
         
