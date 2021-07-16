@@ -1,22 +1,15 @@
 
-# Bibliotecas -------------------------------------------------------------
-
-{
-    library(stabledist)
-    library(tidyverse)
-}
 
 
 # Auxiliar ----------------------------------------------------------------
 
 
-f_alpha = function(x, alpha){
+f_ar = function(x, alpha){
     
     m = length(x)
     out = 0
-    for (i in 1:m){
-        out = out + alpha[i]*x[i]
-    }
+    
+    sum(alpha*x)
     return(out)
 }
 
