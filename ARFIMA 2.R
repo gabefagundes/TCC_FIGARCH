@@ -21,12 +21,18 @@ c_j = function(d, j, c_ar, phi, theta){
 
 d = 0.3
 #======
-phi = c(0.5)
+phi = c(0)
 c_ar = c(1)
-theta = c(0.5)
+theta = c(0)
 
 
-arfima_2 = function(phi, d, theta, n = 500, iter = 50, innov = rnorm(n+max(p,q)+iter), c_ar = rep(1, length(phi))){
+arfima_2 = function(phi, 
+                    d, 
+                    theta, 
+                    n = 500, 
+                    iter = 50, 
+                    innov = rnorm(n+max(length(phi),length(theta))+iter), 
+                    c_ar = rep(0.1, length(phi))){
     p = length(phi)
     q = length(theta)
     y = numeric(n + max(p,q))
@@ -34,10 +40,47 @@ arfima_2 = function(phi, d, theta, n = 500, iter = 50, innov = rnorm(n+max(p,q)+
     
     
     for(i in 1:n){
+        
         for (j in (p+1):(iter+q)){
+            
             C[j] = c_j(d, j, C[(j-p):(j-1)], phi, theta)
+            
         }
             y[i] = sum(C*innov[i:(iter+i)])
     }
+    
+    return(y)
 }
     
+
+# teste 
+par(mfrow = c(1,2))
+a1 = arfima_2(0, 0.3, 0)
+plot.ts(a1)
+acf(a1)
+
+
+
+a2 = arfima_2(0, 0.4, 0)
+plot.ts(a2)
+acf(a2)
+
+
+a3 = arfima_2(0, 0.47, 0)
+plot.ts(a3)
+acf(a3)
+
+
+par(mfrow = c(2,5))
+
+set.seed(123)
+innov = rnorm(550)
+
+
+for(i in 1:10) {
+    c_i = 0.1*i
+    a = arfima_2(0, d, 0, innov = innov, c_ar = c_i)
+    acf(a, main = paste("Valor inicial = ", c_i, ", d =", d) )
+    #plot.ts(a)
+    #title(paste("Valor inicial = ", c_i))
+}
