@@ -41,8 +41,10 @@ arfima_proc = function(phi,
     } 
     
     p = length(phi)
+    if(phi == 0) p = 0
     q = length(theta)
-    y = numeric(n + max(p,q))
+    if(theta == 0) q = 0
+    y = numeric(n)
     C = c(c_ar, numeric(iter))
     
     
@@ -56,19 +58,23 @@ arfima_proc = function(phi,
             y[i] = sum(C*innov[i:(iter+i)])
     }
     
+    
     return(y)
 }
     
 
 # teste 
+
+set.seed(123)
 par(mfrow = c(1,2))
-a1 = arfima_proc(0, 0.3, 0)
+innov = rnorm(550)
+a1 = arfima_proc(0, 0.3, 0, init = 1, innov = innov)
 plot.ts(a1)
 acf(a1)
 
 
-
-a2 = arfima_proc(0, 0.4, 0)
+set.seed(123)
+a2 = arfima_proc(0, 0.3, 0, init = 1, innov = innov)
 plot.ts(a2)
 acf(a2)
 
