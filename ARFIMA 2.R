@@ -19,20 +19,27 @@ c_j = function(d, j, c_ar, phi, theta){
     
 }
 
-d = 0.3
-#======
-phi = c(0)
-c_ar = c(1)
-theta = c(0)
+b_j(0.3, 10)
+c_j(0.3, 10, 0.1, 0, 0)
 
 
-arfima_2 = function(phi, 
+
+arfima_proc = function(phi, 
                     d, 
                     theta, 
                     n = 500, 
                     iter = 50, 
-                    innov = rnorm(n+max(length(phi),length(theta))+iter), 
-                    c_ar = rep(0.1, length(phi))){
+                    innov = rnorm(n+max(length(phi),length(theta))+iter),
+                    init = NULL
+                    ){
+    if (is.null(init)){
+        c_ar = rep(0.5, length(phi))
+    } else if (length(init) == 1){
+        c_ar = rep(init, length(phi))
+    } else if (length(init) != length(phi)){
+        stop("Valores iniciais incompatíveis")
+    } 
+    
     p = length(phi)
     q = length(theta)
     y = numeric(n + max(p,q))
@@ -55,18 +62,18 @@ arfima_2 = function(phi,
 
 # teste 
 par(mfrow = c(1,2))
-a1 = arfima_2(0, 0.3, 0)
+a1 = arfima_proc(0, 0.3, 0)
 plot.ts(a1)
 acf(a1)
 
 
 
-a2 = arfima_2(0, 0.4, 0)
+a2 = arfima_proc(0, 0.4, 0)
 plot.ts(a2)
 acf(a2)
 
 
-a3 = arfima_2(0, 0.47, 0)
+a3 = arfima_proc(0, 0.47, 0)
 plot.ts(a3)
 acf(a3)
 
@@ -75,12 +82,19 @@ par(mfrow = c(2,5))
 
 set.seed(123)
 innov = rnorm(550)
+d = 0.45
 
-
+par(mfrow = c(1,1))
 for(i in 1:10) {
     c_i = 0.1*i
-    a = arfima_2(0, d, 0, innov = innov, c_ar = c_i)
-    acf(a, main = paste("Valor inicial = ", c_i, ", d =", d) )
+    a = arfima_proc(0, d, 0, innov = innov, init = c_i)
+    #plot.ts(a, main = paste("Valor inicial = ", c_i, ", d =", d))
+    acf(a, main = paste("Valor inicial = ", c_i, ", d =", d), lag.max = 100 )
     #plot.ts(a)
     #title(paste("Valor inicial = ", c_i))
 }
+
+
+# teste stable
+
+library(stabledist)
