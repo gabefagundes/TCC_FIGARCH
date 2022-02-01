@@ -108,8 +108,7 @@ arfima_proc = function(phi,
 # x = seq(-100, 100, by = 0.1)
 # y = dstable(x, alpha = 1, beta = 1, gamma = 5)
 # 
-# arf
-
+# 
 # 
 # 
 # proc_stab = arfima_proc(c(0.1, 0.3), 0.3, c(0.4, 0.2), innov = rstable, alpha = 1.5, beta = 1, gamma = 5)

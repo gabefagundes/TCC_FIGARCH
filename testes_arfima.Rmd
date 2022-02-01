@@ -1,0 +1,32 @@
+---
+title: "Teste ARFIMA"
+author: "Gabriel Fagundes"
+date: ""
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+source('ARFIMA 2.R')
+```
+
+## d = 0.3 
+
+Aqui testamos a geração de um processo FI(0.3) para diversos valores iniciais de $C_0$
+
+```{r teste_init, fig.height= 20, fig_width = 50}
+phi = c(0)
+theta = c(0)
+d = 0
+
+par(mfrow = c(2, 1))
+
+for (init in seq(0, 2, 0.1)){
+    y = arfima_proc(phi, 0.3, theta, init = init)
+    plot.ts(y, main = paste('Série para d = 0.3, valor inicial =', init))
+    acf(y, main = paste('ACF para d = 0.3, valor inicial =', init))
+}
+
+```
+

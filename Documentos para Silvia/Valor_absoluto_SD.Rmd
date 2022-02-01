@@ -1,0 +1,41 @@
+---
+title: "Comparação de Simulações com Equação proposta para o valor absoluto de uma Variável estável."
+author: "Gabriel F."
+date: "25/01/2022"
+output: pdf_document:
+    extra_dependencies: ["multirow"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+O objetivo do documento é comparar a última equação do documento de 20/01/2022
+
+\begin{equation}
+    E(|X|) = \frac{2 \sigma^{1/\alpha}}{\pi}\Gamma\left(1 - \frac 1 \alpha\right),
+\end{equation}
+
+em que $X \sim S\alpha S$. Para cada simulação foram geradas 1 000 000 de amostras de variáveis aleatórias $\alpha$-estáveis, tomados seus valores absolutos e calculada a média.
+
+\begin{table}[]
+\begin{tabular}{|c|c|c|c|}
+\hline
+$\alpha$             & $\sigma$ & Simulado & Equação  \\ \hline
+\multirow{3}{*}{2}   & 1        & 1.1275   & 1.1283   \\ \cline{2-4} 
+                     & 5        & 5.6415   & 2.5231   \\ \cline{2-4} 
+                     & 10       & 11.2862  & 3.5682   \\ \hline
+\multirow{3}{*}{1.7} & 1        & 1.3712   & 1.3708   \\ \cline{2-4} 
+                     & 5        & 6.8478   & 3.5331   \\ \cline{2-4} 
+                     & 10       & 13.7495  & 5.3117   \\ \hline
+\multirow{3}{*}{1.5} & 1        & 1.7127   & 1.7054   \\ \cline{2-4} 
+                     & 5        & 8.5193   & 4.9868   \\ \cline{2-4} 
+                     & 10       & 16.9853  & 7.9160   \\ \hline
+\multirow{3}{*}{1.3} & 1        & 2.4912   & 2.5120   \\ \cline{2-4} 
+                     & 5        & 12.0041  & 8.6634   \\ \cline{2-4} 
+                     & 10       & 25.3001  & 14.7655  \\ \hline
+\multirow{3}{*}{1.1} & 1        & 5.0296   & 6.6882   \\ \cline{2-4} 
+                     & 5        & 28.0606  & 28.8894  \\ \cline{2-4} 
+                     & 10       & 47.2182  & 54.25044 \\ \hline
+\end{tabular}
+\end{table}

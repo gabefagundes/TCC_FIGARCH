@@ -1,0 +1,52 @@
+---
+title: "Exemplo de Estimação de Medida Espectral"
+author: "Gabriel F."
+date: "17/01/2022"
+output: 
+    pdf_document:
+        extra_dependencies: ["bbm"]
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F)
+```
+
+
+Nesse documento busca-se apresentar os resultados de uma replicação do exemplo 4.1 do documento _ClassicalEstimation(241121).pdf'_ através dos estimadores MLE e McCulloch, utilizando o método descrito por Nolan(2001) e implementado pelo Maicon.
+
+## Parâmetros Utilizados
+
+Foi gerada uma amostra de tamanho 1000 de um vetor aleátório $S (\Gamma, \mathbf{0})$, em que os componentes possuem parâmetro $\alpha = 1.4$, e foram utilizados 12 pontos para a estimação dos pesos $\gamma_j$ da medida espectral estimada dada por 
+
+\begin{equation}
+\hat{\Gamma}(\cdot) = \frac 1 {12} \sum_{i = 1}^{12} \hat{\gamma}_j \mathbbm{1}_{\hat{s}_j(\cdot)}.
+\end{equation}
+
+
+## Resultados
+
+Para o estimador McCulloch, obtivemos $\hat{\alpha} = 1.3819$, com estimativa da medida espectral $\hat{\Gamma}(\cdot) = (-0.0279, 0.0796)^{\prime}$. Já quando utilizamos o estimador de MV obtivemos $\hat{\alpha} = 1.4139$, com a estimativa da medida espectral $\hat{\Gamma}(\cdot) = (-0.0269, 0.0191)^{\prime}$
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+$\hat{\mathbf{\gamma_j}}$    & \textbf{McCulloch} & \textbf{MLE} \\ \hline \hline
+$\hat{\gamma_1}$    &     0.3114      &  0.3257   \\ \hline
+$\hat{\gamma_2}$    &       0    &  0   \\ \hline
+$\hat{\gamma_3}$    &        0.0229   &     0\\ \hline
+$\hat{\gamma_4}$    &       0    &   0  \\ \hline
+$\hat{\gamma_5}$    &        0.2848   &  0.35322    \\ \hline
+$\hat{\gamma_6}$    &       0    &   0  \\ \hline
+$\hat{\gamma_7}$    &       0    &   0  \\ \hline
+$\hat{\gamma_8}$    &        0   &   0.0183  \\ \hline
+$\hat{\gamma_9}$    &         0.3358  &   0.3207  \\ \hline
+$\hat{\gamma_{10}}$ &   0.0286        & 0    \\ \hline
+$\hat{\gamma_{11}}$ &         0.0308  &  0   \\ \hline
+$\hat{\gamma_{12}}$ &   0        &   0   \\ \hline
+\end{tabular}
+\end{table}
+
+
