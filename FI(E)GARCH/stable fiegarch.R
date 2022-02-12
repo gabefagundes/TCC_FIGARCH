@@ -28,14 +28,13 @@ pi_func = function(k, d){
 }
 
 
-
-
 g_func_stable = function(Z, 
                          theta, 
                          gamma,
                          alpha_stable = 2,
                          method = c('sim', 'ana')
 ){
+
     
     # função feita para v.a.'s normais 
     if(method == 'sim'){
@@ -46,7 +45,7 @@ g_func_stable = function(Z,
     } else if (method == 'ana'){
         E_X = 2 * gamma(1 - 1/alpha_stable)/pi
     }
-    
+
     i = 0
     out = numeric(length(Z))
     
@@ -59,6 +58,7 @@ g_func_stable = function(Z,
     }
     print("g(Z) calculada")
     return(out)
+
 }
 
 
@@ -168,7 +168,7 @@ fiegarch_1d1 = function(N = 500,
     ) 
     x = numeric(N + trunc)
     print("Gerou variaveis iniciais, Começando a gerar valores da série.")
-    
+
     g_z = g_func_stable(Z,theta = theta, gamma = gamma, alpha_stable = alpha_stable)
     lambdas = lambda(trunc, d, alpha, beta)
     
@@ -197,16 +197,15 @@ fiegarch_1d1 = function(N = 500,
 
 # testes ------------------------------------------------------------------
 
-
 {
-    N = 3000
-    d = 0.5
+    N = 1000
+    d = 0.7
     a0 = -9
     alpha = 0.1
     beta = 0.68
     theta = -0.21661
     gamma = 0.27
-    trunc = 5000
+    trunc = 50000
     alpha_stable = 1.5
 }
 
