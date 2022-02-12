@@ -33,13 +33,20 @@ pi_func = function(k, d){
 g_func_stable = function(Z, 
                          theta, 
                          gamma,
-                         alpha_stable = 2){
+                         alpha_stable = 2,
+                         method = c('sim', 'ana')
+){
     
     # função feita para v.a.'s normais 
-    E_X = medias_aux %>% 
-        filter(alpha == alpha_stable) %>% 
-        select(media) %>% 
-        pull()
+    if(method == 'sim'){
+        E_X = medias_aux %>% 
+            filter(alpha == alpha_stable) %>% 
+            select(media) %>% 
+            pull()
+    } else if (method == 'ana'){
+        E_X = 2 * gamma(1 - 1/alpha_stable)/pi
+    }
+    
     i = 0
     out = numeric(length(Z))
     
