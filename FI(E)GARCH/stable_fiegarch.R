@@ -7,8 +7,8 @@
 {
     library(stabledist)
     library(tidyverse)
-    medias_aux = read_csv2('FI(E)GARCH/arquivos_auxiliares/simulacoes_abs_alpha_estavel_medias.csv') %>% 
-        select(alpha, media)
+    #medias_aux = read_csv2('FI(E)GARCH/arquivos_auxiliares/simulacoes_abs_alpha_estavel_medias.csv') %>% 
+    #    select(alpha, media)
 }
 
 
@@ -31,7 +31,7 @@ pi_func = function(k, d){
 g_func_stable = function(Z, 
                          theta, 
                          gamma,
-                         alpha_stable = 2,
+                         alpha = 2,
                          method = c('sim', 'ana')
 ){
 
@@ -39,11 +39,11 @@ g_func_stable = function(Z,
     # função feita para v.a.'s normais 
     if(method == 'sim'){
         E_X = medias_aux %>% 
-            filter(alpha == alpha_stable) %>% 
+            filter(alpha == alpha) %>% 
             select(media) %>% 
             pull()
     } else if (method == 'ana'){
-        E_X = 2 * gamma(1 - 1/alpha_stable)/pi
+        E_X = 2 * gamma(1 - 1/alpha)/pi
     }
 
     i = 0
@@ -89,38 +89,38 @@ poly.prod <- function(a = 1,b = 1){
 }
 
 
-lambda = function(trunc, d, alpha, beta){
+lambda = function(m, d, a1, b1){
     
-    p = c(1, alpha)
-    q = polyinv(c(1, beta), m = trunc)
+    p = c(1, a1)
+    q = polyinv(c(1, b1), m = m)
     pq = poly.prod(a = p, b = q)
     
-    s = sapply(0:trunc, pi_func, d)
+    s = sapply(0:m, pi_func, d)
     
-    out = poly.prod(pq,s)[1:(trunc+1)]
+    out = poly.prod(pq,s)[1:(m+1)]
     
     return(out)
     
 }
 
 
-lambda2 = function(trunc, d, alpha, beta){
+lambda2 = function(m, d, a1, b1){
     ####### para debug #######
-    #trunc = 2
+    #m = 2
     #d = 0.5
-    #alpha = 0.1
-    #beta = 0.1
+    #a1 = 0.1
+    #b1 = 0.1
     #######
     
     
     # Proposition 2 -> Lopes and Prass 
-    out = numeric(trunc+1) #lambda_{d, k} = out[k+1]
-    alpha = c(-1, alpha)
-    beta = c(-1, beta, numeric(trunc-1))
-    #beta = c(-1, beta)
+    out = numeric(m+1) #lambda_{d, k} = out[k+1]
+    a1 = c(-1, a1)
+    b1 = c(-1, b1, numeric(m-1))
+    #b1 = c(-1, b1)
     out[1] = 1
     
-    for(k in 2:(trunc+1)){
+    for(k in 2:(m+1)){
         #print(paste0("k= ", k))
         parcelas_soma1 = numeric(length(1:(k-1)))
         for(i in 1:(k-1)){
@@ -128,8 +128,8 @@ lambda2 = function(trunc, d, alpha, beta){
             parcelas_soma2 = numeric(length(1:(k - i + 1)))
             for (j in 1:(k - i + 1)){
                 #print(paste0("j= ", j))
-                parcelas_soma2[j] = beta[j]*pi_func(k-i-j+1, -d)
-                #print(paste0('pi_func= ', pi_func(k-i-j+1, -d), ', beta_j = ', beta[j]))
+                parcelas_soma2[j] = b1[j]*pi_func(k-i-j+1, -d)
+                #print(paste0('pi_func= ', pi_func(k-i-j+1, -d), ', b1_j = ', b1[j]))
             }
             soma_2 = sum(parcelas_soma2)
             parcelas_soma1[i] = out[i]*soma_2
@@ -137,7 +137,7 @@ lambda2 = function(trunc, d, alpha, beta){
         }
         out[k] = sum(parcelas_soma1)
         if (k == 2){
-            out[k] = out[k] - alpha[k]
+            out[k] = out[k] - a1[k]
         } else {
             out[k] = out[k]
         }
@@ -151,33 +151,38 @@ lambda2 = function(trunc, d, alpha, beta){
 
 fiegarch_1d1 = function(N = 500,
                         d, 
-                        a0,
-                        alpha,
-                        beta,
+                        omega,
+                        a1,
+                        b1,
                         theta, 
                         gamma,
-                        trunc,
-                        alpha_stable =  2){
+                        m,
+                        alpha =  2){
     
-    sigma = numeric(N+trunc)
-    Z = rstable(N + trunc + 1, #Z_0 = z[1] -> Z_t = z[t + 1]
-                alpha = alpha_stable,
+    sigma = numeric(N+m)
+    Z = rstable(N + m + 1, #Z_0 = z[1] -> Z_t = z[t + 1]
+                alpha = alpha,
                 beta = 0,
                 gamma = 1, 
                 delta = 0
     ) 
-    x = numeric(N + trunc)
+    x = numeric(N + m)
     print("Gerou variaveis iniciais, Começando a gerar valores da série.")
 
-    g_z = g_func_stable(Z,theta = theta, gamma = gamma, alpha_stable = alpha_stable)
-    lambdas = lambda(trunc, d, alpha, beta)
+    g_z = g_func_stable(Z,
+                        theta = theta, 
+                        gamma = gamma, 
+                        alpha = alpha, 
+                        method = 'ana')
+    
+    lambdas = lambda(m, d, a1, b1)
     
     
-    for (t in (trunc+1):(N+trunc)){
+    for (t in (m+1):(N+m)){
         #print(t)
-        aux = (t):(t-trunc)
+        aux = (t):(t-m)
         
-        sigma[t] = (a0 + sum(lambdas*g_z[aux])) %>% 
+        sigma[t] = (omega + sum(lambdas*g_z[aux])) %>% 
             exp() %>% 
             sqrt()
         
@@ -185,44 +190,14 @@ fiegarch_1d1 = function(N = 500,
         
     }
     print("Series e Sigmas Gerados")
-    y = x[(trunc+1):(trunc + N)]
-    sigma = sigma[(trunc+1):(trunc + N)]
+    y = x[(m+1):(m + N)]
+    sigma = sigma[(m+1):(m + N)]
     
     
-    out = list(serie = y, sigma = sigma)
+    out = list(serie = y, sigma = sigma, residuos = y/sigma)
     return(out)
     
 }
 
 
-# testes ------------------------------------------------------------------
 
-{
-    N = 1000
-    d = 0.7
-    a0 = -9
-    alpha = 0.1
-    beta = 0.68
-    theta = -0.21661
-    gamma = 0.27
-    trunc = 50000
-    alpha_stable = 1.5
-}
-
-{
-    t0 = Sys.time()
-    #teste = fiegarch_1d1(N, d, a0, alpha, beta, theta, gamma, trunc)
-    teste1 = lambda(trunc = 50000, d = 0.3, 0.1, 0.68)
-    t1 = Sys.time()
-    print(round(t1-t0, 2))
-    print(tail(teste1))
-}
-
-{
-    par(mfrow = c(1,2))
-    plot.ts(teste$serie)
-    plot.ts(teste$sigma^2)
-}
-
-
-Box.test(teste$serie, lag = 20, type = 'Box-Pierce')
